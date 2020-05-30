@@ -1,0 +1,26 @@
+plugins {
+    id 'distribution'
+}
+
+configurations {
+    bundleSrc
+}
+
+dependencies {
+    bundleSrc project(path: ':projectB', configuration: 'archives')
+}
+
+task buildBundle(type: Copy){
+    from configurations.bundleSrc
+        .filter{ println(it.name); it.name.endsWith(".zip")}
+        .collect{ zipTree(it) }
+    into "$buildDir/bundle"
+}
+
+distributions {
+    main {
+        contents {
+            from buildBundle
+        }
+    }
+}
